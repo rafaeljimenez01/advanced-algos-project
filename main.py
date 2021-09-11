@@ -10,9 +10,19 @@ class finder:
         self.palindromes = self.findPalindromicSubstrings(self.mcode1, "mcode1")
         self.palindromes |= self.findPalindromicSubstrings(self.mcode2, "mcode2")
         self.palindromes |= self.findPalindromicSubstrings(self.mcode3, "mcode3")
+        self.long1 = self.Manachen(self.mcode1)
+        self.long2 = self.Manachen(self.mcode2)
+        self.long3 = self.Manachen(self.mcode3)
+
     
-        # for palindrome in self.palindromes:
-        #     print(palindrome)
+        for palindrome in self.palindromes:
+            print(palindrome)
+
+        print("\n PALINDROMOS MAS LARGOS")
+
+        print(self.long1)
+        print(self.long2)
+        print(self.long3)
 
 
     #Encontrar palindromos
@@ -58,5 +68,47 @@ class finder:
         return main_string
 
 
+
+     ### Longest palindrome algorithm ####
+    def UpdatedString(self, string):
+        newString = ['#']
+        for char in string:
+            newString += [char, '#']
+        return ''.join(newString)
+
+    def Manachen(self, string):
+        string = self.UpdatedString(string)
+        LPS = [0 for _ in range(len(string))]
+        C = 0
+        R = 0
+
+        for i in range(len(string)):
+            iMirror = 2 * C - i
+            if R > i:
+                LPS[i] = min(R - i, LPS[iMirror])
+            else:
+                LPS[i] = 0
+            try:
+                while string[i + 1 + LPS[i]] == string[i - 1 - LPS[i]]:
+                    LPS[i] += 1
+            except:
+                pass
+
+            if i + LPS[i] > R:
+                C = i
+                R = i + LPS[i]
+
+        r, c = max(LPS), LPS.index(max(LPS))
+        current_palindrome = string[c - r: c + r].replace("#", "")
+        return current_palindrome
+
+
 if __name__ == '__main__':
    find = finder()
+
+
+
+
+
+
+
