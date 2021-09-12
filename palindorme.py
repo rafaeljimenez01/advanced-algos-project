@@ -1,8 +1,8 @@
 class Palindrome:
-    def __init__(self, word, start, origin):
-        self.origin = origin
+    def __init__(self, word, start, end):
         self.word = word
-        self.start = start
+        self.start = int(start / 2)
+        self.end = int(end / 2)
 
     def __str__(self):
-        return self.origin + " " + self.word + " " + str(self.start) + "\n"
+        return self.word + " " + str(self.start) + " " + str(self.end) + "\n"
