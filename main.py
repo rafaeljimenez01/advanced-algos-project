@@ -112,3 +112,12 @@ if __name__ == '__main__':
     has_malicious(trans2, mcode1, palind1)
     has_malicious(trans2, mcode2, palind2)
     has_malicious(trans2, mcode3, palind3)
+
+    longestPalindrome1 = Manachen(trans1)
+    longestPalindrome2 = Manachen(trans2)
+
+    print("----- longest palindrome in transmission 1 ------")
+    print(longestPalindrome1)
+    print("----- longest palindrome in transmission 2 ------")
+    print(longestPalindrome2)
+
