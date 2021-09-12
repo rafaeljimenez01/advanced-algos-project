@@ -1,53 +1,40 @@
 from palindorme import Palindrome
 
+# INPUT:
+#   - trnas -> string (transmission).
+#   - code -> string (malicious code).
+#   - plaindrome -> string.
+# OUTPUT: None.
+# DESCRIPTION: Finds malicious code insdie the transmision based on the longest
+#              palindrome found in the malicious code. If the malicious code is
+#              isn't found a False will be printed otherwise it will print true
+#              and the possition (starting at 1) where the malicious code was
+#              found.
+# Time Complexity: O(n^2).
 def has_malicious(trans, code, palindrome):
+    # Finds palindrome in transmission.
     index = trans.find(palindrome.word)
 
+    # When palindrome is in the transmission.
     if index != -1:
+        # Finds left & right secction of malicious code in transmission with
+        # respect to palindrome in malicious code.
         left = trans.find(code[0:palindrome.start - 1], 0, index)
         right = trans.find(code[palindrome.end + 1:], index + len(palindrome.word))
 
+        # When left & right secction of malicious code in transaction in the
+        # right order; that is the same order consecutively as is in malicious
+        # code.
         if index - left == len(code[0:palindrome.start]) and right == index + len(palindrome.word) + 1:
             print("True " + str(left + 1))
             return
-        
+
+    # malicious code not found in transmission.
     print(False)
 
-
-#Encontrar palindromos
-#######################################
-# Expand in both directions of `low` and `high` to find all palindromes
-def expand(s, low, high, palindromes, origin):
-    # run till `s[low.high]` is not a palindrome
-    while low >= 0 and high < len(s) and s[low] == s[high]:
-        # añade los palindromos a un set y verifica que sean palindromos
-        # mayores a 4 carácteres
-        if(len(s[low: high + 1])>3):
-            current_palindrome = s[low : high + 1]
-            palindromes.add(Palindrome(current_palindrome, low, origin))
-
-        # Expande en ambas direcciones
-        low = low - 1
-        high = high + 1
-
-
-# Función para encontrar todos los palindromos unicos de un string
-def findPalindromicSubstrings(s, file_name):
-    # Crea un set vacio para guardar todos los palindromos únicos
-    palindromes = set()
-
-    for i in range(len(s)):
-
-
-        # Encuentra todos los palindromos impares con s[i] como punto medio
-        expand(s, i, i, palindromes, file_name)
-
-        # Encuentra todos los palindromos pares con s[i] y s[i+1] como punto medio
-        expand(s, i, i + 1, palindromes, file_name)
-
-    # Imprime todos los palindromos unicos
-    return palindromes
-
+# INPUT: file_name -> string.
+# OUTPUT: main_string -> string(file content)
+# Description: Returns the file content.
 def read_file(file_name):
     text_file = open(file_name, "r")
     main_string = text_file.read().replace('\n', '')
@@ -102,13 +89,24 @@ if __name__ == '__main__':
     trans1 = read_file("transmision1.txt")
     trans2 = read_file("transmision2.txt")
 
-    palind1 = Manachen(mcode1)
-    palind2 = Manachen(mcode2)
-    palind3 = Manachen(mcode3)
+    palind_mcode1 = Manachen(mcode1)
+    palind_mcode2 = Manachen(mcode2)
+    palind_mcode3 = Manachen(mcode3)
+    palind_trans1 = Manachen(trans1)
+    palind_trans2 = Manachen(trans2)
 
-    has_malicious(trans1, mcode1, palind1)
-    has_malicious(trans1, mcode2, palind2)
-    has_malicious(trans1, mcode3, palind3)
-    has_malicious(trans2, mcode1, palind1)
-    has_malicious(trans2, mcode2, palind2)
-    has_malicious(trans2, mcode3, palind3)
+    # Part 1
+    has_malicious(trans1, mcode1, palind_mcode1)
+    has_malicious(trans1, mcode2, palind_mcode2)
+    has_malicious(trans1, mcode3, palind_mcode3)
+    has_malicious(trans2, mcode1, palind_mcode1)
+    has_malicious(trans2, mcode2, palind_mcode2)
+    has_malicious(trans2, mcode3, palind_mcode3)
+
+    # Part 2
+    print(str(palind_trans1.start + 1) + ' ' + str(palind_trans1.end + 1))
+    print(str(palind_trans2.start + 1) + ' ' + str(palind_trans2.end + 1))
+
+    # Part 3
+
+    
