@@ -10,23 +10,36 @@ from palindorme import Palindrome
 #              isn't found a False will be printed otherwise it will print true
 #              and the possition (starting at 1) where the malicious code was
 #              found.
-# Time Complexity: O(n^2).
+# Time Complexity: O((n-m) * m) Where n is the transmission's length and m is
+# the malicious code's length. 
 def has_malicious(trans, code, palindrome):
     # Finds palindrome in transmission.
     index = trans.find(palindrome.word)
 
     # When palindrome is in the transmission.
     if index != -1:
-        # Finds left & right secction of malicious code in transmission with
-        # respect to palindrome in malicious code.
-        left = trans.find(code[0:palindrome.start - 1], 0, index)
-        right = trans.find(code[palindrome.end + 1:], index + len(palindrome.word))
+        code_left = code[0:palindrome.start - 1] # mcode left to the longest palindrome
+        code_right = code[palindrome.end + 1:] # mcdoe right to the longest palindrome
 
-        # When left & right secction of malicious code in transaction in the
-        # right order; that is the same order consecutively as is in malicious
-        # code.
-        if index - left == len(code[0:palindrome.start]) and right == index + len(palindrome.word) + 1:
-            print("True " + str(left + 1))
+        # Finds left & right secction of malicious code in transmission
+        # limitting the search to the length where they are suppose to be in
+        # order for malicious code to be in transmission
+        left_index = trans.find(
+            code_left,
+            index - len(code_left) - 1,
+            index
+        )
+        right_index = trans.find(
+            code_right,
+            index + len(palindrome.word) + 1,
+            index + len(palindrome.word) + len(code_right) + 1
+        )
+
+        # Verifies that `left_code` & `right_code` are before and after,
+        # respectively, the palindomre in the transmission. COnfirming that the
+        # mcode is in the transmission.
+        if index - left_index == len(code[0:palindrome.start]) and right_index == index + len(palindrome.word) + 1:
+            print("True " + str(left_index + 1))
             return
 
     # malicious code not found in transmission.
@@ -44,14 +57,14 @@ def read_file(file_name):
     return main_string
 
     ### Longest palindrome algorithm ####
-def UpdatedString(string):
+def updated_string(string):
     newString = ['#']
     for char in string:
         newString += [char, '#']
     return ''.join(newString)
 
-def Manachen(string):
-    string = UpdatedString(string)
+def manachen(string):
+    string = updated_string(string)
     LPS = [0 for _ in range(len(string))]
     C = 0
     R = 0
@@ -91,9 +104,9 @@ if __name__ == '__main__':
     trans2 = read_file("transmision2.txt")
 
     # Part 1
-    palind1 = Manachen(mcode1)
-    palind2 = Manachen(mcode2)
-    palind3 = Manachen(mcode3)
+    palind1 = manachen(mcode1)
+    palind2 = manachen(mcode2)
+    palind3 = manachen(mcode3)
 
     has_malicious(trans1, mcode1, palind1)
     has_malicious(trans1, mcode2, palind2)
@@ -103,8 +116,8 @@ if __name__ == '__main__':
     has_malicious(trans2, mcode3, palind3)
 
     # Part 2.
-    longestPalindrome1 = Manachen(trans1)
-    longestPalindrome2 = Manachen(trans2)
+    longestPalindrome1 = manachen(trans1)
+    longestPalindrome2 = manachen(trans2)
 
     print("----- longest palindrome in transmission 1 ------")
     print(str(longestPalindrome1.start) + ' ' + str(longestPalindrome1.end))
