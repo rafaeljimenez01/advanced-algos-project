@@ -8,7 +8,7 @@ def has_malicious(trans, code, palindrome):
         right = trans.find(code[palindrome.end + 1:], index + len(palindrome.word))
 
         if index - left == len(code[0:palindrome.start]) and right == index + len(palindrome.word) + 1:
-            print("True " + str(left))
+            print("True " + str(left + 1))
             return
         
     print(False)
