@@ -32,6 +32,7 @@ def has_malicious(trans, code, palindrome):
     # malicious code not found in transmission.
     print(False)
 
+
 # INPUT: file_name -> string.
 # OUTPUT: main_string -> string(file content)
 # Description: Returns the file content.
@@ -89,24 +90,25 @@ if __name__ == '__main__':
     trans1 = read_file("transmision1.txt")
     trans2 = read_file("transmision2.txt")
 
-    palind_mcode1 = Manachen(mcode1)
-    palind_mcode2 = Manachen(mcode2)
-    palind_mcode3 = Manachen(mcode3)
-    palind_trans1 = Manachen(trans1)
-    palind_trans2 = Manachen(trans2)
-
     # Part 1
-    has_malicious(trans1, mcode1, palind_mcode1)
-    has_malicious(trans1, mcode2, palind_mcode2)
-    has_malicious(trans1, mcode3, palind_mcode3)
-    has_malicious(trans2, mcode1, palind_mcode1)
-    has_malicious(trans2, mcode2, palind_mcode2)
-    has_malicious(trans2, mcode3, palind_mcode3)
+    palind1 = Manachen(mcode1)
+    palind2 = Manachen(mcode2)
+    palind3 = Manachen(mcode3)
 
-    # Part 2
-    print(str(palind_trans1.start + 1) + ' ' + str(palind_trans1.end + 1))
-    print(str(palind_trans2.start + 1) + ' ' + str(palind_trans2.end + 1))
+    has_malicious(trans1, mcode1, palind1)
+    has_malicious(trans1, mcode2, palind2)
+    has_malicious(trans1, mcode3, palind3)
+    has_malicious(trans2, mcode1, palind1)
+    has_malicious(trans2, mcode2, palind2)
+    has_malicious(trans2, mcode3, palind3)
 
-    # Part 3
+    # Part 2.
+    longestPalindrome1 = Manachen(trans1)
+    longestPalindrome2 = Manachen(trans2)
 
-    
+    print("----- longest palindrome in transmission 1 ------")
+    print(str(longestPalindrome1.start) + ' ' + str(longestPalindrome1.end))
+    print("----- longest palindrome in transmission 2 ------")
+    print(str(longestPalindrome2.start) + ' ' + str(longestPalindrome2.end))
+
+    # Part 3.
