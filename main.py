@@ -1,9 +1,9 @@
 from palindorme import Palindrome
 
 # INPUT:
-#   - trnas -> string (transmission).
+#   - trans -> string (transmission).
 #   - code -> string (malicious code).
-#   - plaindrome -> string.
+#   - palindrome -> string.
 # OUTPUT: None.
 # DESCRIPTION: Finds malicious code insdie the transmision based on the longest
 #              palindrome found in the malicious code. If the malicious code is
@@ -36,7 +36,7 @@ def has_malicious(trans, code, palindrome):
         )
 
         # Verifies that `left_code` & `right_code` are before and after,
-        # respectively, the palindomre in the transmission. COnfirming that the
+        # respectively, the palindrome in the transmission. Confirming that the
         # mcode is in the transmission.
         if index - left == len(code[0:palindrome.start]) and right == index + len(palindrome.word) + 1:
             print("True " + str(left + 1))
@@ -56,27 +56,42 @@ def read_file(file_name):
 
     return main_string
 
-    ### Longest palindrome algorithm ####
-def updated_string(string):
-    newString = ['#']
-    for char in string:
-        newString += [char, '#']
-    return ''.join(newString)
 
-def manacher(string):
-    string = updated_string(string)
-    LPS = [0 for _ in range(len(string))]
+### Longest palindrome algorithm ####
+
+# INPUT: string_file -> string (the string to convert)
+# OUTPUT: converted_string -> string
+# DESCRIPTION: This method returns a string with characters '#' in between
+# Time Complexity: O(n) where n is the characters in the string
+def updated_string(string_file):
+    new_string_file = ['#']
+    for char in string_file:
+        new_string_file += [char, '#']
+    converted_string = ''.join(new_string_file)
+    return converted_string
+
+
+# INPUT: string_file -> string (the string of the file we are working with)
+# OUTPUT: current_palindrome -> is an instance of the palindrome class which saves the positions
+#                               start and final of the longest palindrome
+# DESCRIPTION: This method finds the longest palindrome in a string very efficiently
+#               this approach takes advantage of properties of a palindrome to avoid
+#               unnecessary computation.
+# Time Complexity: O(n) where n is the length of the string
+def manacher(string_file):
+    string_file = updated_string(string_file)
+    LPS = [0 for _ in range(len(string_file))]
     C = 0
     R = 0
 
-    for i in range(len(string)):
-        iMirror = 2 * C - i
+    for i in range(len(string_file)):
+        Mirror_i = 2 * C - i
         if R > i:
-            LPS[i] = min(R - i, LPS[iMirror])
+            LPS[i] = min(R - i, LPS[Mirror_i])
         else:
             LPS[i] = 0
         try:
-            while string[i + 1 + LPS[i]] == string[i - 1 - LPS[i]]:
+            while string_file[i + 1 + LPS[i]] == string_file[i - 1 - LPS[i]]:
                 LPS[i] += 1
         except:
             pass
@@ -88,7 +103,7 @@ def manacher(string):
     r, c = max(LPS), LPS.index(max(LPS))
 
     current_palindrome = Palindrome(
-        string[c - r: c + r].replace("#", ""),
+        string_file[c - r: c + r].replace("#", ""),
         c - r,
         c + r
     )
