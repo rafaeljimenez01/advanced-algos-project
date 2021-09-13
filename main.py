@@ -111,6 +111,68 @@ def manacher(string_file):
     return current_palindrome
 
 
+# INPUT: X -> string (string 1 to compare)
+#        Y -> string (string 2 to compare)
+# OUTPUT: begin -> (beginning position of the string)
+#         end -> (end position of the string)
+# DESCRIPTION: This method finds the longest common substring between 2 strings
+# Time Complexity: O(m * n) where m is the length of the first string and n the length of
+#                  the second string
+def LCSubStr(X, Y):
+    # Find length of both the strings.
+    m = len(X)
+    n = len(Y)
+
+    # Variable to store length of longest
+    # common substring.
+    result = 0
+
+    # Variable to store ending point of
+    # longest common substring in X.
+    end = 0
+
+    # Matrix to store result of two
+    # consecutive rows at a time.
+    length = [[0 for j in range(m)]
+              for i in range(2)]
+
+    # Variable to represent which row of
+    # matrix is current row.
+    currRow = 0
+
+    # For a particular value of i and j,
+    # length[currRow][j] stores length
+    # of longest common substring in
+    # string X[0..i] and Y[0..j].
+    for i in range(0, m + 1):
+        for j in range(0, n + 1):
+            if (i == 0 or j == 0):
+                length[currRow][j] = 0
+
+            elif (X[i - 1] == Y[j - 1]):
+                length[currRow][j] = length[1 - currRow][j - 1] + 1
+
+                if (length[currRow][j] > result):
+                    result = length[currRow][j]
+                    end = i - 1
+            else:
+                length[currRow][j] = 0
+
+        # Make current row as previous row and
+        # previous row as new current row.
+        currRow = 1 - currRow
+
+    # If there is no common substring, print -1.
+    if (result == 0):
+        return "-1"
+
+    # Longest common substring is from index
+    # end - result + 1 to index end in X.
+    begin = end - result + 1
+    return begin, end  #X[end - result + 1: end + 1]
+
+
+
 if __name__ == '__main__':
     mcode1 = read_file("mcode1.txt")
     mcode2 = read_file("mcode2.txt")
@@ -140,3 +202,13 @@ if __name__ == '__main__':
     print(str(longestPalindrome2.start) + ' ' + str(longestPalindrome2.end))
 
     # Part 3.
+
+    print("\n------ Longest common substring -------")
+    # Function call
+    if len(trans1) > len(trans2):
+        X = trans1
+        Y = trans2
+    else:
+        X = trans2
+        Y = trans1
+    print(LCSubStr(X, Y))
