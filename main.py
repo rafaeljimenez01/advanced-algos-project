@@ -6,7 +6,7 @@ from palindorme import Palindrome
 #   - code -> string (malicious code).
 #   - palindrome -> string.
 # OUTPUT: None.
-# DESCRIPTION: Finds malicious code insdie the transmision based on the longest
+# DESCRIPTION: Finds malicious code inside the transmision based on the longest
 #              palindrome found in the malicious code. If the malicious code is
 #              isn't found a False will be printed otherwise it will print true
 #              and the possition (starting at 1) where the malicious code was
@@ -111,6 +111,7 @@ def manacher(string_file):
 
     return current_palindrome
 
+### Longest common substring ####
 
 # INPUT: X -> string (string 1 to compare)
 #        Y -> string (string 2 to compare)
