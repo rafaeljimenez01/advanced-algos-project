@@ -118,7 +118,7 @@ def manacher(string_file):
 # OUTPUT: X[starts_in: ends_in] -> The LCS between the 2 files
 #         starts_in -> (beginning position of the string)
 #         ends_in -> (end position of the string)
-# DESCRIPTION: This method finds the longest common substring between 2 strings
+# DESCRIPTION: This method finds the longest common substring between 2 strings using dynamic programming
 # Time Complexity: O(m * n) where m is the length of the first string and n the length of
 #                  the second string
 def LCS(X, Y):
@@ -132,14 +132,14 @@ def LCS(X, Y):
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             if X[i - 1] == Y[j - 1]:
-                dp_table[i % 2][j] = dp_table[(i - 1) % 2][j - 1] + 1
+                dp_table[i][j] = dp_table[i - 1][j - 1] + 1
 
-                if dp_table[i % 2][j] > max_length:
-                    max_length = dp_table[i % 2][j]
+                if dp_table[i][j] > max_length:
+                    max_length = dp_table[i][j]
                     ending_index = i
 
             else:
-                dp_table[i % 2][j] = 0
+                dp_table[i][j] = 0
 
             starts_in = ending_index - max_length  # Index in which the lcs starts
             ends_in = ending_index  # Index in which the lcs ends
