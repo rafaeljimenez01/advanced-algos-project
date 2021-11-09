@@ -8,16 +8,17 @@ def get_route(prev, i, route):
 
 def dijksra(graph, origin):
     # Dictionary that stores another dictionary to map a node with all other
-    # neighbors and the shortest distance to travel to each other.
-    # (e.g {node: {neighbor_1: dist, neighbor_2: dist, ...}})
-    distances = {node: float('inf') for node in graph}
+    # neighbors, the shortest distance to travel to each other and the path taken.
+    # (e.g {node: {neighbor_1: {dist, [path]], neighbor_2: {dist, [path]}...}})
+    optimal = {node: {"dist": float('inf'), "path": []} for node in graph}
     # tuple's list that holds the nodes to be vistied. Each tuple holds the 
     # distance to the node from the origin and the node to be visited. The order
     # in which the nodes will be visited depend on the distance value.
     priority_queue = [(0, origin)]
+    parent = [-1] * len(graph.keys())
     
     # Distance from  oirign to itlsef set to 0.
-    distances[origin] = 0
+    optimal[origin]["dist"] = 0
 
     # Iterate through priority queue until empty.
     while priority_queue:
@@ -25,15 +26,16 @@ def dijksra(graph, origin):
         current_distance, current_node = heapq.heappop(priority_queue)
 
         # Only analize node if the distance to current node is not grater.  
-        if current_distance <= distances[current_node]:
+        if current_distance <= optimal[current_node]["dist"]:
 
             for neighbor, traveled_distance in graph[current_node].items():
                 distance = current_distance + traveled_distance
 
                 # Only consider current path if it's better than any path analyzed
                 # befoire
-                if distance < distances[neighbor]:
-                    distances[neighbor] = distance
+                if distance < optimal[neighbor]["dist"]:
+                    optimal[neighbor]["dist"] = distance 
+                    parent[neighbor] = current_node
                     heapq.heappush(priority_queue, (distance, neighbor))
 
     return distances, path
