@@ -1,5 +1,10 @@
 import heapq
-from typing import Optional
+import sys
+
+def get_route(prev, i, route):
+    if i >= 0:
+        get_route(prev, prev[i], route)
+        route.append(i)
 
 def dijksra(graph, origin):
     # Dictionary that stores another dictionary to map a node with all other
