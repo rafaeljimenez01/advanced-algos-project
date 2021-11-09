@@ -21,7 +21,7 @@ def fetch_info(file_name):
             for neighbor in range(len(distance)):
                 # Only add nodes that are reachable or not the same node
                 if distance[neighbor] != '0':
-                    neighborhood_distance[node][neighbor] = distance[neighbor]
+                    neighborhood_distance[node][neighbor] = int(distance[neighbor])
 
         file.readline() # skip empty line.
 
