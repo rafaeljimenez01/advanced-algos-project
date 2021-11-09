@@ -1,11 +1,12 @@
 from palindorme import Palindrome
 
+
 # INPUT:
-#   - trnas -> string (transmission).
+#   - trans -> string (transmission).
 #   - code -> string (malicious code).
-#   - plaindrome -> string.
+#   - palindrome -> string.
 # OUTPUT: None.
-# DESCRIPTION: Finds malicious code insdie the transmision based on the longest
+# DESCRIPTION: Finds malicious code inside the transmision based on the longest
 #              palindrome found in the malicious code. If the malicious code is
 #              isn't found a False will be printed otherwise it will print true
 #              and the possition (starting at 1) where the malicious code was
@@ -36,7 +37,7 @@ def has_malicious(trans, code, palindrome):
         )
 
         # Verifies that `left_code` & `right_code` are before and after,
-        # respectively, the palindomre in the transmission. COnfirming that the
+        # respectively, the palindrome in the transmission. Confirming that the
         # mcode is in the transmission.
         if index - left == len(code[0:palindrome.start]) and right == index + len(palindrome.word) + 1:
             print("True " + str(left + 1))
@@ -56,27 +57,42 @@ def read_file(file_name):
 
     return main_string
 
-    ### Longest palindrome algorithm ####
-def updated_string(string):
-    newString = ['#']
-    for char in string:
-        newString += [char, '#']
-    return ''.join(newString)
 
-def manacher(string):
-    string = updated_string(string)
-    LPS = [0 for _ in range(len(string))]
+### Longest palindrome algorithm ####
+
+# INPUT: string_file -> string (the string to convert)
+# OUTPUT: converted_string -> string
+# DESCRIPTION: This method returns a string with characters '#' in between
+# Time Complexity: O(n) where n is the characters in the string
+def updated_string(string_file):
+    new_string_file = ['#']
+    for char in string_file:
+        new_string_file += [char, '#']
+    converted_string = ''.join(new_string_file)
+    return converted_string
+
+
+# INPUT: string_file -> string (the string of the file we are working with)
+# OUTPUT: current_palindrome -> is an instance of the palindrome class which saves the positions
+#                               start and final of the longest palindrome
+# DESCRIPTION: This method finds the longest palindrome in a string very efficiently
+#               this approach takes advantage of properties of a palindrome to avoid
+#               unnecessary computation.
+# Time Complexity: O(n) where n is the length of the string
+def manacher(string_file):
+    string_file = updated_string(string_file)
+    LPS = [0 for _ in range(len(string_file))]
     C = 0
     R = 0
 
-    for i in range(len(string)):
-        iMirror = 2 * C - i
+    for i in range(len(string_file)):
+        Mirror_i = 2 * C - i
         if R > i:
-            LPS[i] = min(R - i, LPS[iMirror])
+            LPS[i] = min(R - i, LPS[Mirror_i])
         else:
             LPS[i] = 0
         try:
-            while string[i + 1 + LPS[i]] == string[i - 1 - LPS[i]]:
+            while string_file[i + 1 + LPS[i]] == string_file[i - 1 - LPS[i]]:
                 LPS[i] += 1
         except:
             pass
@@ -88,12 +104,47 @@ def manacher(string):
     r, c = max(LPS), LPS.index(max(LPS))
 
     current_palindrome = Palindrome(
-        string[c - r: c + r].replace("#", ""),
+        string_file[c - r: c + r].replace("#", ""),
         c - r,
         c + r
     )
 
     return current_palindrome
+
+### Longest common substring ####
+
+# INPUT: X -> string (string 1 to compare)
+#        Y -> string (string 2 to compare)
+# OUTPUT: X[starts_in: ends_in] -> The LCS between the 2 files
+#         starts_in -> (beginning position of the string)
+#         ends_in -> (end position of the string)
+# DESCRIPTION: This method finds the longest common substring between 2 strings
+#              using dynamic programming
+# Time Complexity: O(m * n) where m is the length of the first string and n the length of
+#                  the second string
+def LCS(X, Y):
+    n = len(X)
+    m = len(Y)
+    # Create DP table
+    dp_table = [[0 for i in range(m + 1)] for j in range(n + 1)]
+    max_length = 0
+    ending_index = n
+
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if X[i - 1] == Y[j - 1]:
+                dp_table[i][j] = dp_table[i - 1][j - 1] + 1
+
+                if dp_table[i][j] > max_length:
+                    max_length = dp_table[i][j]
+                    ending_index = i
+
+            else:
+                dp_table[i][j] = 0
+
+            starts_in = ending_index - max_length  # Index in which the lcs starts
+            ends_in = ending_index  # Index in which the lcs ends
+    return X[starts_in: ends_in], starts_in, ends_in
 
 
 if __name__ == '__main__':
@@ -125,3 +176,9 @@ if __name__ == '__main__':
     print(str(longestPalindrome2.start) + ' ' + str(longestPalindrome2.end))
 
     # Part 3.
+
+    print("\n------ Longest common substring -------")
+    # Function call
+    X = trans1
+    Y = trans2
+    print(LCS(X, Y))
