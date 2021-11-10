@@ -38,7 +38,14 @@ def dijksra(graph, origin):
                     parent[neighbor] = current_node
                     heapq.heappush(priority_queue, (distance, neighbor))
 
-    return distances, path
+    # adds shortest path to each node.
+    for node in range(len(graph.keys())):
+        if node != origin and optimal[node]["dist"] != sys.maxsize:
+            route = []
+            get_route(parent, node, route)
+            optimal[node]["path"] = route
+
+    return optimal
 
 
 # INPUT: file_name -> string.
@@ -79,5 +86,4 @@ def fetch_info(file_name):
 if __name__ == '__main__':
     neighborhoods_dist, data_cap, station_loc = fetch_info("map1.txt")
 
-    neighborhoods_optimal_dist, optimal_path = dijksra(neighborhoods_dist, 0)
-    a = 1
+    optimal_trip = dijksra(neighborhoods_dist, 0)
