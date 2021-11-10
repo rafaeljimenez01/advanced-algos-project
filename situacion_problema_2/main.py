@@ -34,10 +34,50 @@ def fetch_info(file_name):
 def tsp(distances, origin):
     pass
 
+####################
+
+#Floyd-Warshall algorithm -Based on GfG https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/
+#Finds the sortest paths in a directed and weightyed graph
+#Input: Graph (adjency matrix)
+#Output: 2x2 matrix with the shortest paths(similar to adjency matrix but with shortest paths)
+#Time complexity: O(V^3) where V is the number of vertices the graph has
+
+####################
+
+def floyd(graph):
+
+    # This will initialize the result matrix, and will contain the 
+    # sortest distances between every pair of vertices
+    V = len(graph)
+    solution = graph
+    
+
+    #We will take every possible vertex as an intermediate vertex, named K
+    for k in range(V):
+ 
+        # We will take i as the soruce vertex (from where the path would begin)
+        for i in range(V):
+ 
+            # We will take j as the vertex of destination for every i(source)
+            for j in range(V):
+ 
+                # We can make two decisions, to take the k intermidiate vertex 
+                # of to skip it. We will take it into account only if the k vertex
+                # is part of the shortest path
+
+                if solution[i][k] + solution[k][j] < solution[i][j]:
+                    solution[i][j] = solution[i][k] + solution[k][j]
+    print("solution")                            
+
+    return solution
+
 if __name__ == '__main__':
     cities_dist, data_cap, station_loc = fetch_info("map1.txt")
-
+    
     optimal_trip = tsp(cities_dist, 0)
+
+    print(floyd(cities_dist))
+    
 
 
 
