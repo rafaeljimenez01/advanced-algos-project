@@ -1,12 +1,13 @@
 import sys
 import copy
+from collections import defaultdict
 
 def build_matrix(size, file):
     matrix = []
 
     file.readline() # Skip empty line.
 
-    # Fetch and process distacne matrix.
+    # Fetch and process distance matrix.
     for node in range(size):
         distance = file.readline().rsplit()
         matrix.append([])
@@ -134,12 +135,61 @@ def floyd(graph):
 
     return solution
 
+def searching_algo_BFS(rows, graph, s, t, parent):
+
+    visited = [False] * rows
+    queue = []
+
+    queue.append(s)
+    visited[s] = True
+
+    while queue:
+
+        u = queue.pop(0)
+
+        for ind, val in enumerate(graph[u]):
+            if visited[ind] == False and val > 0:
+                queue.append(ind)
+                visited[ind] = True
+                parent[ind] = u
+
+    return True if visited[t] else False
+
+# Applying fordfulkerson algorithm
+def ford_fulkerson(graph, source, sink):
+    parent = [-1] * len(graph)
+    max_flow = 0
+
+    while searching_algo_BFS(len(graph),graph, source, sink, parent):
+
+        path_flow = float("Inf")
+        s = sink
+        while(s != source):
+            path_flow = min(path_flow, graph[parent[s]][s])
+            s = parent[s]
+
+        # Adding the path flows
+        max_flow += path_flow
+
+        # Updating the residual values of edges
+        v = sink
+        while(v != source):
+            u = parent[v]
+            graph[u][v] -= path_flow
+            graph[v][u] += path_flow
+            v = parent[v]
+
+    return max_flow
+
+
 if __name__ == '__main__':
     cities_dist, data_cap, station_loc = fetch_info("map1.txt")
     
     optimal_trip = tsp(cities_dist, 0)
 
     print(floyd(cities_dist))
+
+    print("Max Flow: %d " % ford_fulkerson(data_cap, 0, len(data_cap) - 1))
     
 
 
