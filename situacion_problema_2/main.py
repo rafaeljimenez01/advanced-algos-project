@@ -67,7 +67,7 @@ def floyd(graph):
 
                 if solution[i][k] + solution[k][j] < solution[i][j]:
                     solution[i][j] = solution[i][k] + solution[k][j]
-    print("solution")                            
+                               
 
     return solution
 
@@ -76,7 +76,13 @@ if __name__ == '__main__':
     
     optimal_trip = tsp(cities_dist, 0)
 
-    print(floyd(cities_dist))
+    adcency_floyd = floyd(cities_dist)
+    #display floyd in a nice and easy format
+
+    for i in range(len(adcency_floyd)):
+        for j in range(i+1, len(adcency_floyd[0])):
+            print("ARCO " + str(i) + " " + str(j) + " costara : " + str(adcency_floyd[i][j]))
+
     
 
 
