@@ -1,4 +1,5 @@
 import sys
+import copy
 
 def build_matrix(size, file):
     matrix = []
@@ -31,8 +32,70 @@ def fetch_info(file_name):
 
         return neighborhood_distance, data_cap, station_location
 
+# Traveling salesman probelm using lexicographic order.
 def tsp(distances, origin):
-    pass
+    # store all c apart from source vertex
+    cities = []
+    path = []
+
+    for city in range(len(distances[0])):
+        if city != origin:
+            cities.append(city)
+ 
+    # store minimum weight Hamiltonian Cycle
+    min_path = sys.maxsize
+    possible_paths = get_lexographic_order(cities)
+    for current_path in possible_paths:
+ 
+        # store current Path weight(cost)
+        current_distance = 0
+ 
+        # compute current path weight
+        current_city = origin
+        for next_city in current_path:
+            current_distance += distances[current_city][next_city]
+            current_city = next_city
+
+        current_distance += distances[current_city][origin]
+ 
+        # update minimum
+        min_path = min(min_path, current_distance)
+        if min_path == current_distance:
+            path = current_path
+         
+    return min_path, path
+
+def get_lexographic_order(lst):
+    lex_set = [lst]
+
+    while True:
+        largest_x, largest_y = -1, -1
+
+        # Find largest x such that P[x] < P[x+1].
+        for i in range(len(lst) - 1):
+            if lst[i] < lst[i + 1]:
+                largest_x = i;
+
+        # When there is no value that satisfies largest_x there are no more permutations.
+        if largest_x == -1:
+            break
+
+        # Find largest y such that P[x] < P[y].
+        for j in range(len(lst)):
+            if lst[largest_x] < lst[j]:
+                largest_y = j
+
+        # Swap P[x] and P[y].
+        tmp = copy.copy(lst)
+        tmp[largest_x], tmp[largest_y] = tmp[largest_y], tmp[largest_x]
+
+        # reverse P[x +1 ... n] and add it to lexographical order set.
+        lst = tmp[:largest_x + 1:] + tmp[-1:largest_x:-1]
+        lex_set.append(lst)
+
+    return lex_set
+
+
 
 if __name__ == '__main__':
     cities_dist, data_cap, station_loc = fetch_info("map1.txt")
