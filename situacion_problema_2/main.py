@@ -1,11 +1,13 @@
 import sys
+import copy
+from collections import defaultdict
 
 def build_matrix(size, file):
     matrix = []
 
     file.readline() # Skip empty line.
 
-    # Fetch and process distacne matrix.
+    # Fetch and process distance matrix.
     for node in range(size):
         distance = file.readline().rsplit()
         matrix.append([])
@@ -31,8 +33,70 @@ def fetch_info(file_name):
 
         return neighborhood_distance, data_cap, station_location
 
+# Traveling salesman probelm using lexicographic order.
 def tsp(distances, origin):
-    pass
+    # store all c apart from source vertex
+    cities = []
+    path = []
+
+    for city in range(len(distances[0])):
+        if city != origin:
+            cities.append(city)
+ 
+    # store minimum weight Hamiltonian Cycle
+    min_path = sys.maxsize
+    possible_paths = get_lexographic_order(cities)
+    for current_path in possible_paths:
+ 
+        # store current Path weight(cost)
+        current_distance = 0
+ 
+        # compute current path weight
+        current_city = origin
+        for next_city in current_path:
+            current_distance += distances[current_city][next_city]
+            current_city = next_city
+
+        current_distance += distances[current_city][origin]
+ 
+        # update minimum
+        min_path = min(min_path, current_distance)
+        if min_path == current_distance:
+            path = current_path
+         
+    return min_path, path
+
+def get_lexographic_order(lst):
+    lex_set = [lst]
+
+    while True:
+        largest_x, largest_y = -1, -1
+
+        # Find largest x such that P[x] < P[x+1].
+        for i in range(len(lst) - 1):
+            if lst[i] < lst[i + 1]:
+                largest_x = i;
+
+        # When there is no value that satisfies largest_x there are no more permutations.
+        if largest_x == -1:
+            break
+
+        # Find largest y such that P[x] < P[y].
+        for j in range(len(lst)):
+            if lst[largest_x] < lst[j]:
+                largest_y = j
+
+        # Swap P[x] and P[y].
+        tmp = copy.copy(lst)
+        tmp[largest_x], tmp[largest_y] = tmp[largest_y], tmp[largest_x]
+
+        # reverse P[x +1 ... n] and add it to lexographical order set.
+        lst = tmp[:largest_x + 1:] + tmp[-1:largest_x:-1]
+        lex_set.append(lst)
+
+    return lex_set
+
+
 
 ####################
 
@@ -71,18 +135,68 @@ def floyd(graph):
 
     return solution
 
+def searching_algo_BFS(rows, graph, s, t, parent):
+
+    visited = [False] * rows
+    queue = []
+
+    queue.append(s)
+    visited[s] = True
+
+    while queue:
+
+        u = queue.pop(0)
+
+        for ind, val in enumerate(graph[u]):
+            if visited[ind] == False and val > 0:
+                queue.append(ind)
+                visited[ind] = True
+                parent[ind] = u
+
+    return True if visited[t] else False
+
+# Applying fordfulkerson algorithm
+def ford_fulkerson(graph, source, sink):
+    parent = [-1] * len(graph)
+    max_flow = 0
+
+    while searching_algo_BFS(len(graph),graph, source, sink, parent):
+
+        path_flow = float("Inf")
+        s = sink
+        while(s != source):
+            path_flow = min(path_flow, graph[parent[s]][s])
+            s = parent[s]
+
+        # Adding the path flows
+        max_flow += path_flow
+
+        # Updating the residual values of edges
+        v = sink
+        while(v != source):
+            u = parent[v]
+            graph[u][v] -= path_flow
+            graph[v][u] += path_flow
+            v = parent[v]
+
+    return max_flow
+
+
 if __name__ == '__main__':
     cities_dist, data_cap, station_loc = fetch_info("map1.txt")
     
     optimal_trip = tsp(cities_dist, 0)
 
+    #adcency_floyd contains the adjancy matrix that it's the result of floyd-warshall algorithm
     adcency_floyd = floyd(cities_dist)
-    #display floyd in a nice and easy format
+    #display floyd in a nice and easy to understand format
 
     for i in range(len(adcency_floyd)):
         for j in range(i+1, len(adcency_floyd[0])):
             print("ARCO " + str(i) + " " + str(j) + " costara : " + str(adcency_floyd[i][j]))
 
+
+    print("Max Flow: %d " % ford_fulkerson(data_cap, 0, len(data_cap) - 1))
     
 
 
