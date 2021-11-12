@@ -45,15 +45,15 @@ def tsp(distances, origin):
     for city in range(len(distances[0])):
         if city != origin:
             cities.append(city)
- 
+
     # store minimum weight Hamiltonian Cycle
     min_path = sys.maxsize
     possible_paths = get_lexographic_order(cities)
     for current_path in possible_paths:
- 
+
         # store current Path weight(cost)
         current_distance = 0
- 
+
         # compute current path weight
         current_city = origin
         for next_city in current_path:
@@ -61,12 +61,12 @@ def tsp(distances, origin):
             current_city = next_city
 
         current_distance += distances[current_city][origin]
- 
+
         # update minimum
         min_path = min(min_path, current_distance)
         if min_path == current_distance:
             path = current_path
-         
+
     return min_path, path
 
 def get_lexographic_order(lst):
@@ -113,87 +113,104 @@ def get_lexographic_order(lst):
 
 def floyd(graph):
 
-    # This will initialize the result matrix, and will contain the 
+    # This will initialize the result matrix, and will contain the
     # sortest distances between every pair of vertices
     V = len(graph)
     solution = graph
-    
+
 
     #We will take every possible vertex as an intermediate vertex, named K
     for k in range(V):
- 
+
         # We will take i as the soruce vertex (from where the path would begin)
         for i in range(V):
- 
+
             # We will take j as the vertex of destination for every i(source)
             for j in range(V):
- 
+
                 # We can make two decisions, to take the k intermidiate vertex 
                 # of to skip it. We will take it into account only if the k vertex
                 # is part of the shortest path
 
                 if solution[i][k] + solution[k][j] < solution[i][j]:
                     solution[i][j] = solution[i][k] + solution[k][j]
-                               
+
 
     return solution
 
-def searching_algo_BFS(rows, graph, s, t, parent):
 
+#####################
+
+#Ford-Fulkerson algorithm -Based on GfG https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
+#Given a weighted graph finds that represents the flow in a network where every edge has a capacity.
+# This problem was solved using Edmond Karp algorithm which is an extension of the ford-fulkerson algorithm that
+#uses BFS for finding the augmented paths
+#Finds the maximum flow in from a source to sink
+#Input: Graph, source, sink
+#Output: Maximum flow of information
+#Time complexity: O(EV^3) where V is the number of vertices the graph has and E are the edges
+
+####################
+
+#Bread First Search for finding all the augmented paths
+
+def BFS(rows, graph, source, sink, parent):
+
+    #Set all vertices to not visited
     visited = [False] * rows
     queue = []
 
-    queue.append(s)
-    visited[s] = True
+    queue.append(source) #Source node visited and added to the queue
+    visited[source] = True
 
+    #Start the BFS
     while queue:
-
         u = queue.pop(0)
 
-        for ind, val in enumerate(graph[u]):
-            if visited[ind] == False and val > 0:
-                queue.append(ind)
-                visited[ind] = True
-                parent[ind] = u
+        for index, value in enumerate(graph[u]):
+            if not visited[index] and value > 0:
+                queue.append(index)
+                visited[index] = True
+                parent[index] = u
 
-    return True if visited[t] else False
+    return True if visited[sink] else False
 
-# Applying fordfulkerson algorithm
+# Applying Ford Fulkerson algorithm
 def ford_fulkerson(graph, source, sink):
-    parent = [-1] * len(graph)
-    max_flow = 0
+    flow_max = 0
+    parent = [0] * len(graph)
 
-    while searching_algo_BFS(len(graph),graph, source, sink, parent):
+    while BFS(len(graph), graph, source, sink, parent):
 
         path_flow = float("Inf")
         s = sink
-        while(s != source):
+        while s != source:
             path_flow = min(path_flow, graph[parent[s]][s])
             s = parent[s]
 
         # Adding the path flows
-        max_flow += path_flow
+        flow_max += path_flow
 
         # Updating the residual values of edges
         v = sink
-        while(v != source):
+        while v != source:
             u = parent[v]
             graph[u][v] -= path_flow
             graph[v][u] += path_flow
             v = parent[v]
 
-    return max_flow
+    return flow_max
 
 def voronoi_diagram(centrales):
-    points = np.array([[200,500],[300,100],[450,150],[520,480]])
+    points = np.array(centrales)
     vor = Voronoi(points)
     print(vor.regions)
     fig = voronoi_plot_2d(vor)
     plt.show()  
 
 if __name__ == '__main__':
-    cities_dist, data_cap, station_loc = fetch_info("map1.txt")
-    
+    cities_dist, flow_graph, station_loc = fetch_info("map1.txt")
+
     optimal_trip = tsp(cities_dist, 0)
 
     #adcency_floyd contains the adjancy matrix that it's the result of floyd-warshall algorithm
@@ -204,10 +221,11 @@ if __name__ == '__main__':
         for j in range(i+1, len(adcency_floyd[0])):
             print("ARCO " + str(i) + " " + str(j) + " costara : " + str(adcency_floyd[i][j]))
 
-    voronoi_diagram([1,2])
-    print("Max Flow: %d " % ford_fulkerson(data_cap, 0, len(data_cap) - 1))
+    voronoi_diagram([[200,500],[300,100],[450,150],[520,480]])
     print("Optimal trip :")
     print(optimal_trip)
+    print("Max Flow: %d " % ford_fulkerson(flow_graph, 0, len(flow_graph) - 1))
+
 
 
 
@@ -226,7 +244,7 @@ if __name__ == '__main__':
 #     # in which the nodes will be visited depend on the distance value.
 #     priority_queue = [(0, origin)]
 #     parent = [-1] * len(graph.keys())
-    
+
 #     # Distance from  oirign to itlsef set to 0.
 #     optimal[origin]["dist"] = 0
 
