@@ -1,6 +1,9 @@
 import sys
 import copy
 from collections import defaultdict
+import numpy as np
+from scipy.spatial import Voronoi, voronoi_plot_2d
+import matplotlib.pyplot as plt
 
 def build_matrix(size, file):
     matrix = []
@@ -181,6 +184,12 @@ def ford_fulkerson(graph, source, sink):
 
     return max_flow
 
+def voronoi_diagram(centrales):
+    points = np.array([[200,500],[300,100],[450,150],[520,480]])
+    vor = Voronoi(points)
+    print(vor.regions)
+    fig = voronoi_plot_2d(vor)
+    plt.show()  
 
 if __name__ == '__main__':
     cities_dist, data_cap, station_loc = fetch_info("map1.txt")
@@ -195,9 +204,10 @@ if __name__ == '__main__':
         for j in range(i+1, len(adcency_floyd[0])):
             print("ARCO " + str(i) + " " + str(j) + " costara : " + str(adcency_floyd[i][j]))
 
-
+    voronoi_diagram([1,2])
     print("Max Flow: %d " % ford_fulkerson(data_cap, 0, len(data_cap) - 1))
-    
+    print("Optimal trip :")
+    print(optimal_trip)
 
 
 
