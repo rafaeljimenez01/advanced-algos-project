@@ -36,6 +36,16 @@ def fetch_info(file_name):
 
         return neighborhood_distance, data_cap, station_location
 
+# Prints the min path for the traveling salesman problem.
+def print_path(path, origin):
+    print(chr(97 + origin) + " -> ", end='')
+
+    for city in path:
+        print(chr(97 + city), end='')
+        if city != path[len(path) - 1]:
+            print(" -> ", end='')
+
+    print()
 
 # INPUTS:
 #   - distances-> list of lists.
@@ -47,7 +57,10 @@ def fetch_info(file_name):
 # DESCRIPTION: calculates the minimum path to visit every single city only once
 #              and come back to the origin utilising Lexographic order.
 #
-# TIME COMPLEXITY: o(v!) Where V is the number or nodes (cities).
+# TIME COMPLEXITY: o(|V|!) Where |V| is the number or nodes (cities).
+#
+# BASED ON:
+#   - https://www.iosrjournals.org/iosr-jm/papers/Vol6-issue4/A0640108.pdf
 def tsp(distances, origin):
     # store all c apart from source vertex
     cities = []
@@ -67,8 +80,12 @@ def tsp(distances, origin):
         # compute current path weight
         current_city = origin
         for next_city in current_path:
-            current_distance += distances[current_city][next_city]
-            current_city = next_city
+            if distances[current_city][next_city] != 0:
+                current_distance += distances[current_city][next_city]
+                current_city = next_city
+            else:
+                current_distance = sys.maxsize
+                break
 
         current_distance += distances[current_city][origin]
 
@@ -77,8 +94,22 @@ def tsp(distances, origin):
         if min_path == current_distance:
             path = current_path
 
-    return min_path, path
+    print_path(path, origin)
 
+# INPUTS:
+#   - lst -> list.
+#
+# OOUTPUT:
+#   - lex_set -> list
+#
+# DESCRIPTION: Obtains all the posible permutations for the list in lexographic 
+#              order. (the size of each permutation is as big as the input list)
+#
+# TIME COMPLEXITY: O(n) where n is the length of the input list or O(|V|) Whhere
+#                  |V| is the number of nodes (cities).
+#
+# BASED ON:
+#   - https://www.quora.com/How-would-you-explain-an-algorithm-that-generates-permutations-using-lexicographic-ordering
 def get_lexographic_order(lst):
     lex_set = [lst]
 
@@ -221,7 +252,8 @@ def voronoi_diagram(centrales):
 if __name__ == '__main__':
     cities_dist, flow_graph, station_loc = fetch_info("map1.txt")
 
-    optimal_trip = tsp(cities_dist, 0)
+    tsp(cities_dist, 0)
+
 
     #adcency_floyd contains the adjancy matrix that it's the result of floyd-warshall algorithm
     adcency_floyd = floyd(cities_dist)
