@@ -147,7 +147,7 @@ def get_lexographic_order(lst):
 ####################
 
 #Floyd-Warshall algorithm -Based on GfG https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/
-#Finds the sortest paths in a directed and weightyed graph
+#Finds the sortest paths in a directed and weighted graph
 #Input: Graph (adjency matrix)
 #Output: 2x2 matrix with the shortest paths(similar to adjency matrix but with shortest paths)
 #Time complexity: O(V^3) where V is the number of vertices the graph has
@@ -226,6 +226,17 @@ def ford_fulkerson(graph, source, sink):
             v = parent[v]
 
     return max_flow
+
+'''
+
+#Voronoid generator 
+#Generates a voronoid using the points provided and can locate in which voronoi sector any given point is.
+#Input: array of points to generate voronoid diagram, points(houses) for which we will find the nearest voronoid point 
+#Output: displays graphic voronoid diagram and prints HOUSE coordinates and area that it belongs to
+#Time complexity: O(n log n * m) where n is the number of voronoid points and m its the number of houses to be looked for  
+
+
+'''
 
 def voronoi_diagram(centrales, casas):
     points = np.array(centrales)
