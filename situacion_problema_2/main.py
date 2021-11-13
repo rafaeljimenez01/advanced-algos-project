@@ -38,7 +38,31 @@ def fetch_info(file_name):
 
         return neighborhood_distance, data_cap, station_location
 
-# Traveling salesman probelm using lexicographic order.
+# Prints the min path for the traveling salesman problem.
+def print_path(path, origin):
+    print(chr(97 + origin) + " -> ", end='')
+
+    for city in path:
+        print(chr(97 + city), end='')
+        if city != path[len(path) - 1]:
+            print(" -> ", end='')
+
+    print()
+
+# INPUTS:
+#   - distances-> list of lists.
+#   - origon-> integer.
+#
+# OOUTPUT:
+#   - path -> list
+#
+# DESCRIPTION: calculates the minimum path to visit every single city only once
+#              and come back to the origin utilising Lexographic order.
+#
+# TIME COMPLEXITY: o(|V|!) Where |V| is the number or nodes (cities).
+#
+# BASED ON:
+#   - https://www.iosrjournals.org/iosr-jm/papers/Vol6-issue4/A0640108.pdf
 def tsp(distances, origin):
     # store all c apart from source vertex
     cities = []
@@ -47,7 +71,6 @@ def tsp(distances, origin):
     for city in range(len(distances[0])):
         if city != origin:
             cities.append(city)
- 
     # store minimum weight Hamiltonian Cycle
     min_path = sys.maxsize
     possible_paths = get_lexographic_order(cities)
@@ -59,8 +82,12 @@ def tsp(distances, origin):
         # compute current path weight
         current_city = origin
         for next_city in current_path:
-            current_distance += distances[current_city][next_city]
-            current_city = next_city
+            if distances[current_city][next_city] != 0:
+                current_distance += distances[current_city][next_city]
+                current_city = next_city
+            else:
+                current_distance = sys.maxsize
+                break
 
         current_distance += distances[current_city][origin]
  
@@ -68,9 +95,23 @@ def tsp(distances, origin):
         min_path = min(min_path, current_distance)
         if min_path == current_distance:
             path = current_path
-         
-    return min_path, path
 
+    print_path(path, origin)
+
+# INPUTS:
+#   - lst -> list.
+#
+# OOUTPUT:
+#   - lex_set -> list
+#
+# DESCRIPTION: Obtains all the posible permutations for the list in lexographic 
+#              order. (the size of each permutation is as big as the input list)
+#
+# TIME COMPLEXITY: O(n) where n is the length of the input list or O(|V|) Whhere
+#                  |V| is the number of nodes (cities).
+#
+# BASED ON:
+#   - https://www.quora.com/How-would-you-explain-an-algorithm-that-generates-permutations-using-lexicographic-ordering
 def get_lexographic_order(lst):
     lex_set = [lst]
 
@@ -140,7 +181,7 @@ def floyd(graph):
 
     return solution
 
-def searching_algo_BFS(rows, graph, s, t, parent):
+def bfs(rows, graph, s, t, parent):
 
     visited = [False] * rows
     queue = []
@@ -165,7 +206,7 @@ def ford_fulkerson(graph, source, sink):
     parent = [-1] * len(graph)
     max_flow = 0
 
-    while searching_algo_BFS(len(graph),graph, source, sink, parent):
+    while bfs(len(graph),graph, source, sink, parent):
 
         path_flow = float("Inf")
         s = sink
@@ -189,6 +230,7 @@ def ford_fulkerson(graph, source, sink):
 def voronoi_diagram(centrales, casas):
     points = np.array(centrales)
     vor = Voronoi(points, furthest_site = False)
+    print("VERTICES INTERNOS DE LAS REGIONES DE VORONOI: ")
     print(vor.vertices)
     fig = voronoi_plot_2d(vor,how_points = True,show_vertices = True, line_colors = "red")
     
@@ -196,16 +238,21 @@ def voronoi_diagram(centrales, casas):
     
     #Search for nearest central 
     voronoi_kdtree = cKDTree(points_normal)
-    extraPoints = casas
-    test_point_dist, test_point_regions = voronoi_kdtree.query(extraPoints)
-    print(test_point_regions)
+    points_find = casas
+    test_point_dist, regions = voronoi_kdtree.query(points_find)
+    print("REGIONES DE LAS DIFERENTES CASAS: ")
+
+    for i in range(len(points_find)):
+        print(casas[i])
+        print(regions[i])
+    
     plt.show()  
 
 if __name__ == '__main__':
-    cities_dist, data_cap, station_loc = fetch_info("map1.txt")
-    
-    optimal_trip = tsp(cities_dist, 0)
+    cities_dist, flow_graph, station_loc = fetch_info("map1.txt")
 
+    
+    print("PUNTO 1")
     #adcency_floyd contains the adjancy matrix that it's the result of floyd-warshall algorithm
     adcency_floyd = floyd(cities_dist)
     #display floyd in a nice and easy to understand format
@@ -214,11 +261,24 @@ if __name__ == '__main__':
         for j in range(i+1, len(adcency_floyd[0])):
             print("ARCO " + str(i) + " " + str(j) + " costara : " + str(adcency_floyd[i][j]))
 
+    print("PUNTO 2")
+    print("Traveling salesman origin 0")
+    tsp(cities_dist, 0)
+    print("Traveling salesman origin 1")
+    tsp(cities_dist, 1)
+    print("Traveling salesman origin 2")
+    tsp(cities_dist, 2)
+    print("Traveling salesman origin 3")
+    tsp(cities_dist, 3)
+
+    print("PUNTO 3")
+    
+    print("Max Flow: %d " % ford_fulkerson(flow_graph, 0, len(flow_graph) - 1))
+
+    print("PUNTO 4")
     centrales = [[200,500], [300,100], [450,150], [520,480]]
     
     casas = [[500,100], [450, 400], [300,400], [5,0], [350,300], [310,316]]
     
     voronoi_diagram(centrales, casas)
-    print("Max Flow: %d " % ford_fulkerson(data_cap, 0, len(data_cap) - 1))
-    print("Optimal trip :")
-    print(optimal_trip)
+    
