@@ -146,7 +146,7 @@ def get_lexographic_order(lst):
 
 ####################
 
-#Floyd-Warshall algorithm -Based on GfG https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/
+#Floyd-Warshall algorithm - Based on GfG https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/
 #Finds the sortest paths in a directed and weighted graph
 #Input: Graph (adjency matrix)
 #Output: 2x2 matrix with the shortest paths(similar to adjency matrix but with shortest paths)
@@ -180,6 +180,21 @@ def floyd(graph):
                                
 
     return solution
+
+#####################
+
+#Ford-Fulkerson algorithm -Based on GfG https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
+#Given a weighted graph finds that represents the flow in a network where every edge has a capacity.
+# This problem was solved using Edmond Karp algorithm which is an extension of the ford-fulkerson algorithm that
+#uses BFS for finding the augmented paths
+#Finds the maximum flow in from a source to sink
+#Input: Graph, source, sink
+#Output: Maximum flow of information
+#Time complexity: O(EV^3) where V is the number of vertices the graph has and E are the edges
+
+####################
+
+#Bread First Search for finding all the augmented paths
 
 def bfs(rows, graph, s, t, parent):
 
