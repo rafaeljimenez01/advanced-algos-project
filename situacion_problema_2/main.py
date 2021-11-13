@@ -36,7 +36,18 @@ def fetch_info(file_name):
 
         return neighborhood_distance, data_cap, station_location
 
-# Traveling salesman probelm using lexicographic order.
+
+# INPUTS:
+#   - distances-> list of lists.
+#   - origon-> integer.
+#
+# OOUTPUT:
+#   - path -> list
+#
+# DESCRIPTION: calculates the minimum path to visit every single city only once
+#              and come back to the origin utilising Lexographic order.
+#
+# TIME COMPLEXITY: o(v!) Where V is the number or nodes (cities).
 def tsp(distances, origin):
     # store all c apart from source vertex
     cities = []
@@ -45,7 +56,6 @@ def tsp(distances, origin):
     for city in range(len(distances[0])):
         if city != origin:
             cities.append(city)
-
     # store minimum weight Hamiltonian Cycle
     min_path = sys.maxsize
     possible_paths = get_lexographic_order(cities)
